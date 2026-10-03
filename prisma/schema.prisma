@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id           Int    @id @default(autoincrement())
+  name         String
+  email        String @unique
+  role         String @default("recruiter")
+  passwordHash String
+  notes        Note[]
+}
+model Role {
+  id               Int      @id @default(autoincrement())
+  title            String   @unique
+  description      String   @default("")
+  responsibilities String   @default("")
+  requirements     String   @default("")
+  status           String   @default("open")
+  postedAt         DateTime @default(now())
+}
+model Applicant {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String
+  phone         String?
+  location      String?
+  role          String
+  level         String
+  skills        String?
+  portfolio     String?
+  linkedin      String?
+  github        String?
+  resumePath    String?
+  portfolioPath String?
+  whyJoin       String
+  contribution  String?
+  learning      String?
+  availability  String?
+  rate          String?
+  extra         String?
+  status        String   @default("New")
+  createdAt     DateTime @default(now())
+  notes         Note[]
+}
+model Note {
+  id          Int       @id @default(autoincrement())
+  applicantId Int
+  recruiterId Int
+  note        String
+  createdAt   DateTime  @default(now())
+  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  recruiter   User      @relation(fields: [recruiterId], references: [id])
+}
